@@ -3,4 +3,5 @@
 Output/
 *build/*
 !Output/Output.md
-
+out/
+.vs

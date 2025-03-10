@@ -5,7 +5,20 @@ cmake_minimum_required(VERSION 3.18)
 # project meta
 # ============
 # settings
-set(CUDA_ARCHITECTURES 86)
+set(CUDA_ARCHITECTURES 75 86)
+
+set(CMAKE_CUDA_COMPILER "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/nvcc.exe")
+set(CUDA_TOOLKIT_ROOT_DIR "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4")
+set(CUDA_INCLUDE_DIRS "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/include")
+set(CUDA_LIBRARY_DIRS "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/lib/x64")
+
+#set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler=-fPIC")
+#set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --compiler-options -fPIC")
+set(CUDA_CUDART "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/lib/x64/cudart.lib")
+
+find_package(CUDAToolkit REQUIRED COMPONENTS cufft)
+include_directories(${CUDA_INCLUDE_DIRS})
+
 set(CMAKE_BUILD_TYPE "Release")
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug")
@@ -25,8 +38,9 @@ endif()
 # find packages
 find_package(Eigen3 REQUIRED)
 find_package(GLEW REQUIRED)
-find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
+set(FreeGLUT_DIR "C:/Users/cs.ALIEN1/vcpkg/installed/x64-windows/share/freeglut")
+find_package(FreeGLUT REQUIRED NO_DEFAULT_PATH)
 
 
 add_executable(gipc)
@@ -48,7 +62,7 @@ target_compile_definitions(gipc PRIVATE USE_SNK SVD_DOUBLE ADAPTIVE_KAPPA)
 
 # link cuda libraries
 target_link_libraries(gipc PRIVATE cusparse cublas cusolver cudart_static)
-target_link_libraries(gipc PRIVATE GLUT::GLUT GLEW::GLEW OpenGL::GLU Eigen3::Eigen)
+target_link_libraries(gipc PRIVATE ${FreeGLUT_LIBRARIES} GLEW::GLEW OpenGL::GLU Eigen3::Eigen)
 
 target_compile_features(gipc PRIVATE cxx_std_17 cuda_std_17)
 target_link_libraries(gipc PUBLIC CUDA::cuda_driver CUDA::cudart)
@@ -76,3 +90,4 @@ target_compile_options(gipc
 )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GIPC_SOURCE} ${GIPC_HANDER})
+
